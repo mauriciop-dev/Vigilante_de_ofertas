@@ -1,0 +1,42 @@
+# Nombre de tu flujo de trabajo. Aparecerá en la pestaña "Actions" de GitHub.
+name: Vigilante de Ofertas Automático
+
+# Define cuándo se debe ejecutar este flujo de trabajo
+on:
+  # Permite ejecutarlo manualmente desde la pestaña Actions
+  workflow_dispatch:
+
+  # Lo ejecuta automáticamente en un horario programado
+  schedule:
+    # Esto significa "a las 12:00 UTC todos los días". 
+    # Puedes ajustarlo. Es un buen horario para empezar.
+    - cron: '0 12 * * *'
+
+# Define el trabajo que se va a realizar
+jobs:
+  # Nombramos nuestro trabajo "build" (es un nombre común)
+  build:
+    # Le decimos que se ejecute en la última versión de Ubuntu (un sistema operativo de Linux)
+    runs-on: ubuntu-latest
+
+    # Estos son los pasos que ejecutará el robot
+    steps:
+      # 1. Clona tu repositorio para tener acceso a tus archivos (main.py, etc.)
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # 2. Configura el entorno de Python
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10' # Puedes usar una versión más reciente si quieres
+
+      # 3. Instala las librerías necesarias desde tu archivo requirements.txt
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      
+      # 4. ¡Ejecuta tu script de Python!
+      - name: Run price checker script
+        run: python main.py
